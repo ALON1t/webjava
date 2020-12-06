@@ -8,7 +8,7 @@
 <html>
 <head>
 	<title>我的博客</title>
-	<base href="<%=basePath%>">   <!--解决相对路径问题-->
+	<base href="<%=basePath%>">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<!-- HTTP 1.1 -->
 	<meta http-equiv="pragma" content="no-cache">

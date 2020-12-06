@@ -40,4 +40,6 @@ insert into article(title, content,user_id) value ('插入','public...',2);
 -- 比如从表有数据关联到主表某一行数据X,那X不能删
 -- 真实的设计上不是删除物理数据，再每一张表上设计一个字段，表示是否有效
 
+select id, username, password, nickname, sex, birthday, head from user where username='a';
 
+select id,title from article where user_id=1;

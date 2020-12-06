@@ -1,6 +1,8 @@
 package org.example.servlet;
 
 import org.example.exception.AppException;
+import org.example.model.JSONResponse;
+import org.example.util.JSONUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,38 +20,51 @@ public abstract class AbstractBase extends HttpServlet { //抽象类
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        //设置请求，响应编码，及响应数据类型（为响应体设置Content-Type数据类型）
+        req.setCharacterEncoding("UTF-8");//设置请求编码格式
+        resp.setCharacterEncoding("UTF-8");//设置响应体的编码
+        //resp.setContentType("text/html");//设置响应体的数据类型（浏览器要采用什么方式执行）
+
+        resp.setContentType("application/json");
+        //Session会话管理：除登录和注册接口，其他都需要登陆后访问
+        //通过req.getServletPath() 方法获取请求服务路径
+        //req.getServletPath();
+        //TODO
+        JSONResponse json = new JSONResponse();
         try{
-            //设置请求，响应编码，及响应数据类型（为响应体设置Content-Type数据类型）
-            req.setCharacterEncoding("UTF-8");//设置请求编码
-            resp.setCharacterEncoding("UTF-8");
-            resp.setContentType("text/html");
-
-            //Session会话管理：除登录和注册接口，其他都需要登陆后访问
-            //通过req.getServletPath() 方法获取请求服务路径
-            //req.getServletPath();
-            //TODO
-
             //调用子类重写的方法
-            process(req,resp);
+            Object data = process(req,resp);
+            //子类的方法执行完没有抛异常，表示业务执行成功
+            json.setSuccess(true);
+            json.setData(data);
+
         } catch (Exception e) {
             //异常如何处理？
             //JDBC 的异常（假设是SQLException），JSON 处理的异常,自定义异常返回错误信息
             e.printStackTrace();
+            //json.setSuccess(false)并不用设置了，new的时候就是false
+            String code = "UNKNOWN";
             String s = "服务器未知的错误";
             if(e instanceof AppException) {//e等于自定义异常
+                code = ((AppException)e).getCode();
                 s = e.getMessage();
             }
-            PrintWriter pw = resp.getWriter();
-            pw.println(s);
-            pw.flush();
-            pw.close();
-            // 预留 TODO
+            json.setCode(code);
+            json.setMessage(s);
 
         }
+        //io流
+        PrintWriter pw = resp.getWriter();
+        pw.println(JSONUtil.serialize(json));
+        pw.flush();
+        pw.close();
+        // 预留 TODO
     }
 
     //protected 子类可以用
-    protected abstract void process(HttpServletRequest req, HttpServletResponse resp) throws Exception;
+    // protected abstract void process(HttpServletRequest req, HttpServletResponse resp) throws Exception;
+    protected abstract Object process(HttpServletRequest req, HttpServletResponse resp) throws Exception;
 
 
 }
