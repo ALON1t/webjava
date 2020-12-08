@@ -6,6 +6,7 @@ org\example\servlet\ArticleADDServlet.class
 org\example\dao\ArticleDAO.class
 org\example\util\JSONUtil.class
 org\example\servlet\ArticleListServlet.class
+org\example\servlet\UEditorServlet.class
 org\example\servlet\articleUpdateServlet.class
 org\example\servlet\articleDeleteServlet.class
 org\example\model\Article.class
@@ -14,3 +15,4 @@ org\example\filter\LoginFilter.class
 org\example\dao\LoginDAO.class
 org\example\servlet\LoginServlet.class
 org\example\model\JSONResponse.class
+org\example\util\MyActionEnter.class
