@@ -5,12 +5,14 @@ public class InterruptTest2 {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+                //子线程
                 //Thread.interrupted()返回当前线程的中断标志位，然后重置中断标志位
                 for(int i = 0; i < 10;i++) {
                     System.out.println(i+":"+Thread.interrupted());
                 }
             }
         });
+        //main线程
         t.start(); //线程启动 中断标志位为false
         System.out.println("t_start");
         //模拟t执行了5秒还没有结束，要中断、停止t线程
