@@ -1,7 +1,8 @@
 package lesson3;
 
 public class unSafeThread {
-    private static int COUNT = 0;
+    private volatile static int COUNT = 0;
+   // private static int COUNT = 0;
     //一个变量COUNT=0,同时启动20个线程，每个线程循环1000次，每次循环执行COUNT++
     //等待20个子线程执行完毕之后，在main线程打印COUNT（预期20000）
      public static void main(String[] args) throws InterruptedException {
@@ -12,7 +13,7 @@ public class unSafeThread {
                 @Override
                 public void run() {
                     for(int j = 0; j < 1000;j++) {
-                        COUNT++;
+                        COUNT++;//1.从主存中读取值  2.修改  3.写回主存
                     }
                 }
             });
