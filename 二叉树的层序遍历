@@ -1,0 +1,31 @@
+/*
+class TreeNode {
+    Integer key;
+    TreeNode left;
+    TreeNode right;
+
+    public TreeNode(Integer key) {
+        this.key = key;
+    }
+}
+*/
+public ArrayList<Integer> levelOrder(TreeNode root) {
+       ArrayList<Integer> ret = new ArrayList<>();
+       if(root == null) {
+           return ret;
+       }
+       Queue<TreeNode> queue = new LinkedList<>();
+       queue.add(root);
+       while(!queue.isEmpty()) {
+           TreeNode node = queue.peek();
+           queue.poll();
+           ret.add(node.key);
+           if(node.left != null) {
+               queue.add(node.left);
+           }
+           if(node.right != null) {
+               queue.add(node.right);
+           }
+       }
+       return ret;
+    }
