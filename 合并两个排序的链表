@@ -1,0 +1,35 @@
+/*
+public class ListNode {
+    int val;
+    ListNode next = null;
+
+    ListNode(int val) {
+        this.val = val;
+    }
+}*/
+public class Solution {
+    public ListNode Merge(ListNode list1,ListNode list2) {
+        ListNode cur1 = list1;
+        ListNode cur2 = list2;
+        ListNode result = new ListNode(-1);
+        ListNode res = result;
+        while(cur1 != null && cur2 != null){
+            if(cur1.val < cur2.val){
+               res.next = cur1;
+                cur1 = cur1.next;
+            }else{
+               res.next = cur2;
+                cur2 = cur2.next;
+            }
+            res = res.next;
+        }
+        if(cur1 != null){
+            res.next = cur1;
+        }
+        if(cur2 != null){
+            res.next = cur2;
+        }
+        return result.next;
+        
+    }
+}
