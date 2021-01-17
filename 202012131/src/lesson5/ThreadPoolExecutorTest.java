@@ -1,9 +1,6 @@
 package lesson5;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class ThreadPoolExecutorTest {
     public static void main(String[] args) {
@@ -16,14 +13,14 @@ public class ThreadPoolExecutorTest {
                 new ThreadFactory() {
                     @Override
                     public Thread newThread(Runnable r) {
-
                         return new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                long start = System.currentTimeMillis();
-                                r.run();
-                                long end = System.currentTimeMillis();
-                                System.out.println("任务执行了" + (end - start) + "毫秒");
+                                System.out.println(Thread.currentThread().getName() + "任务执行了");
+//                                long start = System.currentTimeMillis();
+//                                r.run();
+//                                long end = System.currentTimeMillis();
+//                                System.out.println("任务执行了" + (end - start) + "毫秒");
                             }
                         });
                     }
@@ -36,7 +33,7 @@ public class ThreadPoolExecutorTest {
                  * DiscardPolicy:交给我的任务,直接丢弃掉
                  * DiscardOldestPolicy:丢弃阻塞队列中最旧的任务
                  */
-        );
+        ); //线程池创建以后，只要有任务就执行
         for(int i = 0; i < 1000;i++) {
             //线程池执行任务 execute()  submit()->提交执行一个任务
             pool.execute(new Runnable() {
@@ -50,6 +47,15 @@ public class ThreadPoolExecutorTest {
                 }
             });
         }
+        /**
+         * 线程池有四个快捷创建方式：（实际工作不使用，作为面试要了解）
+         * 阿里Java开发手册，说明不能直接使用以下方法创建线程池
+         * 实际工作中需要ThreadPoolExecutor,构造参数自己指定
+         */
+        ExecutorService pool2 = Executors.newSingleThreadExecutor(); //单线程池
+        ExecutorService pool3 = Executors.newCachedThreadPool(); //缓存线程池
+        ExecutorService pool4 = Executors.newScheduledThreadPool(4);//计划任务线程池
+        ExecutorService pool5 = Executors.newFixedThreadPool(4);//固定大小线程池
     }
 
 }
