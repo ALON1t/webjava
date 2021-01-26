@@ -2,6 +2,8 @@ package org.example.model;
 
 import jdk.nashorn.internal.objects.annotations.Getter;
 
+import java.util.Objects;
+
 /**
  * 每一个本地html文件对应一个文档对象
  */
@@ -52,5 +54,21 @@ public class DocInfo {
                 ", url='" + url + '\'' +
                 ", content='" + content + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DocInfo docInfo = (DocInfo) o;
+        return Objects.equals(id, docInfo.id) &&
+                Objects.equals(title, docInfo.title) &&
+                Objects.equals(url, docInfo.url) &&
+                Objects.equals(content, docInfo.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, url, content);
     }
 }
