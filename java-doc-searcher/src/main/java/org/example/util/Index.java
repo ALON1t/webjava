@@ -26,9 +26,10 @@ import java.util.stream.Collectors;
  */
 public class Index {
     //正排索引
-    private  static final List<DocInfo> FORWARD_INDEX = new ArrayList<>();
+    private static final List<DocInfo> FORWARD_INDEX = new ArrayList<>();
     //倒排索引
-    private static final Map<String,List<Weight>> INVERTED_INDEX = new HashMap<>();
+    private static final Map<String, List<Weight>> INVERTED_INDEX = new HashMap<>();
+
     /**
      * 构建正排索引的内容：从本地raw_data.text读取并保存
      */
@@ -39,7 +40,7 @@ public class Index {
             int id = 0; //行号设置为docInfo的id
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.trim().equals(""))continue;
+                if (line.trim().equals("")) continue;
                 //一行对应一个docInfo对象 类似数据库一行数据对应一个Java对象
                 DocInfo doc = new DocInfo();
                 doc.setId(++id);
@@ -56,6 +57,7 @@ public class Index {
             throw new RuntimeException(e);
         }
     }
+
     /**
      * 构建倒排索引：从Java内存中正排索引获取文档信息来构建
      */
@@ -74,10 +76,10 @@ public class Index {
                     w = new Weight();
                     w.setDoc(doc);
                     w.setKeyword(titleFenCi.getName());
-                    cache.put(titleFenCi.getName(),w);
+                    cache.put(titleFenCi.getName(), w);
                 }
                 //标题分词，权重加10
-                w.setWeight(w.getWeight()+10);
+                w.setWeight(w.getWeight() + 10);
             }
             //正文分词处理，逻辑与标题分词一样
             List<Term> contentFenCis = ToAnalysis.parse(doc.getContent()).getTerms();
@@ -87,21 +89,21 @@ public class Index {
                     w = new Weight();
                     w.setDoc(doc);
                     w.setKeyword(contentFenCi.getName());
-                    cache.put(contentFenCi.getName(),w);
+                    cache.put(contentFenCi.getName(), w);
                 }
                 //正文分词，权重+1
-                w.setWeight(w.getWeight()+1);
+                w.setWeight(w.getWeight() + 1);
             }
             //把临时保存的map数据（keyword_-weight),全部保存到倒排索引
-            for (Map.Entry<String,Weight> e : cache.entrySet()) {
+            for (Map.Entry<String, Weight> e : cache.entrySet()) {
                 String keyword = e.getKey();
                 Weight w = e.getValue();
                 //更新保存到倒排索引Map<String,List<Weight>>-->多个文档，同一个关键词保存在一个List
                 //现在倒排索引中，通过keyword获取已有的值
-                List<Weight> weights =  INVERTED_INDEX.get(keyword);
-                if(weights == null) { //如果拿不到，就创建一个，并存放到倒排索引
+                List<Weight> weights = INVERTED_INDEX.get(keyword);
+                if (weights == null) { //如果拿不到，就创建一个，并存放到倒排索引
                     weights = new ArrayList<>();
-                    INVERTED_INDEX.put(keyword,weights);
+                    INVERTED_INDEX.put(keyword, weights);
                 }
                 weights.add(w);//倒排中，添加当前文档每个分词对应的weight对象
 
@@ -109,6 +111,11 @@ public class Index {
         }
     }
 
+
+    //通过关键词（分词），在倒排中查找映射
+    public static List<Weight> get(String keyword) {
+        return INVERTED_INDEX.get(keyword);
+    }
 
     public static void main(String[] args) {
         Index.buildForwardIndex();
@@ -130,6 +137,9 @@ public class Index {
   //                  .collect(Collectors.toList());
                     .forEach(System.out::print);
             System.out.println();
+            //weights.add(w);
         }
     }
+
+
 }
