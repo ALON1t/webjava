@@ -54,6 +54,7 @@
         <div class="desc">{{result.desc}}</div>
         <div class="url">{{result.url}}</div>
     </div>
+    <p v-if="msg" style="color: red">{{msg}}</p>
 </div>
 </body>
 <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -64,7 +65,8 @@
         el: "#app",
         data: {
             query: "",
-            results: [ ]
+            results: [ ],
+            msg: " "
         },
         methods: {
             search() {
@@ -73,7 +75,14 @@
                     type: "get",
                     context: this,
                     success: function(respData, status) {
-                        this.results = respData.data;
+                        if (respData.ok) {
+                            this.results = respData.data;
+                            this.msg = " ";
+                        } else {
+                            this.results = [];
+                            this.msg = respData.msg;
+
+                        }
                     }
                 })
             },

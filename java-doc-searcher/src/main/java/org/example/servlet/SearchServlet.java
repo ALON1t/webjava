@@ -91,6 +91,7 @@ public class SearchServlet extends HttpServlet {
         } catch (Exception e ){
             e.printStackTrace();
             map.put("ok",false);
+            map.put("mes","未知错误");
         }
         PrintWriter pw = resp.getWriter();//获取输出流
         //设置响应体的内容：map对象序列化为json字符串
