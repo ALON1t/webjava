@@ -2,9 +2,9 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client { //客户端
+public class Client {
     public static void main(String[] args) throws IOException {
-        Socket socket = new Socket("127.0.0.1", 8080);
+        Socket socket = new Socket("42.193.120.201", 8080);
         // socket 已经建立好连接了
 
         InputStream inputStream = socket.getInputStream();
