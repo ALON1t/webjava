@@ -3,14 +3,13 @@ package v3;
 import java.io.*;
 import java.net.Socket;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class RequestResponseTask implements Runnable {
     // TODO: 自己运行代码时，需要修改成自己的绝对路径
-    private static final String DOC_BASE = "C:\\Users\\LENOVO\\预研阶段学习java\\docBase";
+    private static final String DOC_BASE = "D:\\课程\\2021-3-4-Java31-40班-HTTP项目\\预研阶段学习\\docBase";
     private final Socket socket;
 
     public RequestResponseTask(Socket socket) {
@@ -36,6 +35,7 @@ public class RequestResponseTask implements Runnable {
             Scanner scanner = new Scanner(inputStream, "UTF-8");
             scanner.next(); // 读取出来的是方法，暂时不用，所以没保存
             String path = scanner.next();
+            scanner.nextLine(); // 读取出来 HTTP 版本信息，暂时不用，所以没保存
 
             String requestURI = path;
             String queryString = "";
@@ -46,13 +46,75 @@ public class RequestResponseTask implements Runnable {
             }
             System.out.println(requestURI);
 
+            Map<String, String> headers = new HashMap<>();
+            // 通过 scanner，读取请求头
+            String headerLine;
+            while (scanner.hasNextLine() && !(headerLine = scanner.nextLine()).isEmpty()) {
+                // 通过 ":" 分割
+                String[] part = headerLine.split(":");
+                String name = part[0].trim().toLowerCase(); // HTTP 的 header-name 大小写不敏感
+                String value = part[1].trim();
+
+                headers.put(name, value);
+            }
+
             // 通过类似这样的处理，使得 / => /index.html 同样的效果
             if (requestURI.equals("/")) {
                 // welcome-file
                 requestURI = "/index.html";
             }
 
-            if (requestURI.equals("/goodbye.html")) {
+            if (requestURI.equals("/set-cookie")) {
+                OutputStream outputStream = socket.getOutputStream();
+                Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
+                PrintWriter printWriter = new PrintWriter(writer);
+
+                printWriter.printf("HTTP/1.0 307 Temporary Redirect\r\n");
+                printWriter.printf("Set-Cookie: username=peixinchen\r\n");
+                printWriter.printf("Location: profile\r\n");
+                printWriter.printf("\r\n");
+                printWriter.flush();
+            } else if (requestURI.equals("/profile")) {
+                OutputStream outputStream = socket.getOutputStream();
+                Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
+                PrintWriter printWriter = new PrintWriter(writer);
+
+                String username = null;
+                // 从 cookie 中获取 username
+                String cookie = headers.getOrDefault("cookie", "");
+                System.out.println("Cookie value:" + cookie);
+                for (String cookieKV : cookie.split(";")) {
+                    if (cookieKV.isEmpty()) {
+                        continue;
+                    }
+                    String[] kv = cookieKV.split("=");
+                    String cookieName = kv[0];
+                    String cookieValue = kv[1];
+                    if (cookieName.equals("username")) {
+                        username = cookieValue;
+                    }
+                }
+
+                printWriter.printf("HTTP/1.0 200 OK\r\n");
+                printWriter.printf("Content-Type: text/html; charset=utf-8\r\n");
+                printWriter.printf("\r\n");
+                if (username != null) {
+                    printWriter.printf("<h1>当前用户是: %s</h1>", username);
+                } else {
+                    printWriter.printf("<h1>您需要先进行登录</h1>");
+                }
+                printWriter.flush();
+            } else if (requestURI.equals("/redirect-to")) {
+                OutputStream outputStream = socket.getOutputStream();
+                Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
+                PrintWriter printWriter = new PrintWriter(writer);
+
+                printWriter.printf("HTTP/1.0 307 Temporary Redirect\r\n");
+                printWriter.printf("Location: /hello.jpg\r\n");
+                printWriter.printf("\r\n");
+                printWriter.flush();
+
+            } else if (requestURI.equals("/goodbye.html")) {
                 OutputStream outputStream = socket.getOutputStream();
                 Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
                 PrintWriter printWriter = new PrintWriter(writer);
@@ -77,8 +139,7 @@ public class RequestResponseTask implements Runnable {
                 printWriter.printf("HTTP/1.0 200 OK\r\n");
                 printWriter.printf("Content-Type: text/html; charset=utf-8\r\n");
                 printWriter.printf("\r\n");
-                //printWriter.printf("<h1>再见</h1>");
-                printWriter.printf("<h1>再见 %s</h1>",target);
+                printWriter.printf("<h1>再见 %s</h1>", target);
                 printWriter.flush();
             } else {
                 String filePath = DOC_BASE + requestURI;  // 用户请求的静态资源对应的路径
