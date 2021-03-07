@@ -21,6 +21,7 @@ public class RequestResponseTask implements Runnable {
         mimeTypeMap.put("txt", "text/plain");
         mimeTypeMap.put("html", "text/html");
         mimeTypeMap.put("js", "application/javascript");
+        mimeTypeMap.put("jpg","image/jpeg");
     }
 
     @Override
@@ -35,48 +36,51 @@ public class RequestResponseTask implements Runnable {
             String path = scanner.next();
             System.out.println(path);
 
+            if (path.equals("/")) {
+                path = "/index.html";
+            }
             String filePath = DOC_BASE + path;  // 用户请求的静态资源对应的路径
             // 0. 暂时先不考虑，文件是一个目录的情况
             // 1. 判断该文件是否存在 —— File
             File resource = new File(filePath);
             if (resource.exists()) {
                 // 读取文件内容，并写入 response body 中
-//
-//                OutputStream outputStream = socket.getOutputStream();
-//                Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
-//                PrintWriter printWriter = new PrintWriter(writer);
-//
-//                String contentType = "text/plain";
-//                // 找到路径对应的后缀（字符串处理）
-//                if (path.contains(".")) {
-//                    int i = path.lastIndexOf(".");
-//                    String suffix = path.substring(i + 1);
-//                    contentType = mimeTypeMap.getOrDefault(suffix, contentType);
-//                }
-//                // 如果 contentType 是 "text/..."，代表是文本
-//                // 我们都把字符集统一设定成 utf-8
-//                if (contentType.startsWith("text/")) {
-//                    contentType = contentType + "; charset=utf-8";
-//                }
-//
-//                printWriter.printf("HTTP/1.0 200 OK\r\n");
-//                printWriter.printf("Content-Type: %s\r\n", contentType);
-//                printWriter.printf("\r\n");
-//                printWriter.flush();    // NOTICE: 千万不要忘记
-//
-//                // 写入 response body
-//                try (InputStream resourceInputStream = new FileInputStream(resource)) {
-//                    byte[] buffer = new byte[1024];
-//                    while (true) {
-//                        int len = resourceInputStream.read(buffer);
-//                        if (len == -1) {
-//                            break;
-//                        }
-//
-//                        outputStream.write(buffer, 0, len);
-//                    }
-//                    outputStream.flush();
-//                }
+
+                OutputStream outputStream = socket.getOutputStream();
+                Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
+                PrintWriter printWriter = new PrintWriter(writer);
+
+                String contentType = "text/plain";
+                // 找到路径对应的后缀（字符串处理）
+                if (path.contains(".")) {
+                    int i = path.lastIndexOf(".");
+                    String suffix = path.substring(i + 1);
+                    contentType = mimeTypeMap.getOrDefault(suffix, contentType);
+                }
+                // 如果 contentType 是 "text/..."，代表是文本
+                // 我们都把字符集统一设定成 utf-8
+                if (contentType.startsWith("text/")) {
+                    contentType = contentType + "; charset=utf-8";
+                }
+
+                printWriter.printf("HTTP/1.0 200 OK\r\n");
+                printWriter.printf("Content-Type: %s\r\n", contentType);
+                printWriter.printf("\r\n");
+                printWriter.flush();    // NOTICE: 千万不要忘记
+
+                // 写入 response body
+                try (InputStream resourceInputStream = new FileInputStream(resource)) {
+                    byte[] buffer = new byte[1024];
+                    while (true) {
+                        int len = resourceInputStream.read(buffer);
+                        if (len == -1) {
+                            break;
+                        }
+
+                        outputStream.write(buffer, 0, len);
+                    }
+                    outputStream.flush();
+                }
             } else {
                 // response 404
 
