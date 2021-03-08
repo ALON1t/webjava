@@ -1,7 +1,13 @@
 package com.yutan.standard.tomcat;
 
+import com.peixinchen.standard.Servlet;
+
 import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class HttpServer {
     public static void main(String[] args) throws IOException {
@@ -24,7 +30,7 @@ public class HttpServer {
 //        }
     }
 
-    private static void initServer() {
+    private static void initServer() throws IOException {
         scanContexts();
         parseContextConf();
 //        loadServletClasses();
@@ -32,63 +38,15 @@ public class HttpServer {
 //        initializeServletObjects();
     }
 
-    private static void parseContextConf() {
+    private static void parseContextConf() throws IOException {
         for (Context context : contextList) {
-            // 进行 web.conf 文件的读取 + 解析
-
-            // web.conf 放哪里，必须符合规范，否则就会读不到
-            String filename = String.format("%s/%s/WEB-INF/web.conf", WEBAPPS_BASE, context.getName());
-
-            String stage = "start"; // "servlets"/"mappings"
-
-            // 进行文本文件内容的读取
-            try (InputStream is = new FileInputStream(filename)) {
-                Scanner scanner = new Scanner(is, "UTF-8");
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine().trim();
-                    if (line.isEmpty() || line.startsWith("#")) {
-                        // 如果是空行、或者注释行，跳过
-                        continue;
-                    }
-
-                    switch (stage) {
-                        case "start":
-                            if (line.equals("servlets:")) {
-                                stage = "servlets";
-                            }
-                            break;
-                        case "servlets":
-                            if (line.equals("servlet-mappings:")) {
-                                stage = "mappings";
-                            } else {
-                                // 进行 ServletName => ServletClassName 的解析
-                                String[] parts = line.split("=");
-                                String servletName = parts[0].trim();
-                                String servletClassName = parts[1].trim();
-                                context.servletNameToServletClassNameMap.put(servletName, servletClassName);
-                            }
-                            break;
-                        case "mappings":
-                            // 进行 URL => ServletName 的解析
-                            String[] parts = line.split("=");
-                            String url = parts[0].trim();
-                            String servletName = parts[1].trim();
-                            context.urlToServletNameMap.put(url, servletName);
-                            break;
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            // 进行配置文件的解析工作（标准）
-
-            System.out.println(context.servletNameToServletClassNameMap);
-            System.out.println(context.urlToServletNameMap);
+            context.readConfigFile();
         }
     }
 
-    private static final String WEBAPPS_BASE = "D:\\课程\\2021-3-4-Java31-40班-HTTP项目\\正式项目代码\\webapps";
+    public static final String WEBAPPS_BASE = "D:\\课程\\2021-3-4-Java31-40班-HTTP项目\\正式项目代码\\webapps";
     private static final List<Context> contextList = new ArrayList<>();
+    private static final ConfigReader configReader = new ConfigReader();
     private static void scanContexts() {
         File webappsRoot = new File(WEBAPPS_BASE);
         File[] files = webappsRoot.listFiles();
@@ -104,7 +62,7 @@ public class HttpServer {
 
             String contextName = file.getName();
             System.out.println(contextName);
-            Context context = new Context(contextName);
+            Context context = new Context(configReader, contextName);
 
             contextList.add(context);
         }

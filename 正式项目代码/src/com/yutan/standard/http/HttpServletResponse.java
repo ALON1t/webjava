@@ -1,6 +1,6 @@
 package com.yutan.standard.http;
 
-import com.peixinchen.standard.ServletResponse;
+import com.yutan.standard.ServletResponse;
 
 public interface HttpServletResponse extends ServletResponse {
     void addCookie(Cookie cookie);
@@ -12,4 +12,6 @@ public interface HttpServletResponse extends ServletResponse {
     void setHeader(String name, String value);
 
     void setStatus(int sc);
+
+    void setContentType(String s);
 }

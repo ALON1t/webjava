@@ -4,6 +4,7 @@ import com.peixinchen.standard.Servlet;
 import com.peixinchen.standard.ServletException;
 import com.peixinchen.standard.ServletRequest;
 import com.peixinchen.standard.ServletResponse;
+import com.yutan.standard.ServletException;
 
 import java.io.IOException;
 
@@ -36,7 +37,7 @@ public abstract class HttpServlet implements Servlet {
         }
     }
 
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, ServletException {
         resp.sendError(405);
     }
 }

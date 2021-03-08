@@ -1,6 +1,6 @@
 package com.yutan.standard.http;
 
-import com.peixinchen.standard.ServletRequest;
+import com.yutan.standard.ServletRequest;
 
 public interface HttpServletRequest extends ServletRequest {
     Cookie[] getCookies();
@@ -14,4 +14,6 @@ public interface HttpServletRequest extends ServletRequest {
     String getRequestURI();
 
     HttpSession getSession();
+
+    String getParameter(String english);
 }
