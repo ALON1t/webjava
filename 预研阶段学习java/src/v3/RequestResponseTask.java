@@ -1,15 +1,19 @@
 package v3;
 
+import jdk.internal.util.xml.impl.Input;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class RequestResponseTask implements Runnable {
     // TODO: 自己运行代码时，需要修改成自己的绝对路径
-    private static final String DOC_BASE = "D:\\课程\\2021-3-4-Java31-40班-HTTP项目\\预研阶段学习\\docBase";
+    private static final String DOC_BASE = "C:\\Users\\LENOVO\\预研阶段学习java\\docBase";
     private final Socket socket;
 
     public RequestResponseTask(Socket socket) {
@@ -24,6 +28,8 @@ public class RequestResponseTask implements Runnable {
         mimeTypeMap.put("js", "application/javascript");
         mimeTypeMap.put("jpg", "image/jpeg");
     }
+
+    private static final String SESSION_BASE = "C:\\Users\\LENOVO\\预研阶段学习java\\sessions";
 
     @Override
     public void run() {
@@ -64,7 +70,98 @@ public class RequestResponseTask implements Runnable {
                 requestURI = "/index.html";
             }
 
-            if (requestURI.equals("/set-cookie")) {
+            if (requestURI.equals("/required-login")) {
+                String uuid = null;
+                String cookie = headers.getOrDefault("cookie", "");
+                for (String cookieKV : cookie.split(";")) {
+                    if (cookieKV.isEmpty()) {
+                        continue;
+                    }
+                    String[] kv = cookieKV.split("=");
+                    String cookieName = kv[0];
+                    String cookieValue = kv[1];
+                    if (cookieName.equals("session-id")) {
+                        uuid = cookieValue;
+                    }
+                }
+
+                OutputStream outputStream = socket.getOutputStream();
+                Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
+                PrintWriter printWriter = new PrintWriter(writer);
+                if (uuid == null) {
+                    // 用户一定没有登录
+                    printWriter.printf("HTTP/1.0 200 OK\r\n");
+                    printWriter.printf("Set-Cookie: session-id=%s\r\n", uuid);
+                    printWriter.printf("Content-Type: text/plain; charset=utf-8\r\n");
+                    printWriter.printf("\r\n");
+                    printWriter.printf("没有登录");
+                    printWriter.flush();
+                } else {
+                    File sessionFile = new File(SESSION_BASE, uuid + ".session");
+                    if (!sessionFile.exists()) {
+                        printWriter.printf("HTTP/1.0 200 OK\r\n");
+                        printWriter.printf("Set-Cookie: session-id=%s\r\n", uuid);
+                        printWriter.printf("Content-Type: text/plain; charset=utf-8\r\n");
+                        printWriter.printf("\r\n");
+                        printWriter.printf("没有登录");
+                        printWriter.flush();
+                    } else {
+                        try (InputStream is = new FileInputStream(sessionFile)) {
+                            try (ObjectInputStream objectInputStream = new ObjectInputStream(is)) {
+                                Map<String, Object> sessionData = (Map<String, Object>)objectInputStream.readObject();
+                                User user = (User)sessionData.get("user");
+                                if (user == null) {
+                                    printWriter.printf("HTTP/1.0 200 OK\r\n");
+                                    printWriter.printf("Set-Cookie: session-id=%s\r\n", uuid);
+                                    printWriter.printf("Content-Type: text/plain; charset=utf-8\r\n");
+                                    printWriter.printf("\r\n");
+                                    printWriter.printf("没有登录");
+                                    printWriter.flush();
+                                } else {
+                                    printWriter.printf("HTTP/1.0 200 OK\r\n");
+                                    printWriter.printf("Set-Cookie: session-id=%s\r\n", uuid);
+                                    printWriter.printf("Content-Type: text/plain; charset=utf-8\r\n");
+                                    printWriter.printf("\r\n");
+                                    printWriter.printf("当前用是: " + user.toString());
+                                    printWriter.flush();
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (requestURI.equals("/login")) {
+                // 登录的用户是 HelloWorld
+                User user = new User(1, "HelloWorld", "男");
+
+                // 创建 Session 对象 —— req.getSession();
+                String uuid = UUID.randomUUID().toString();
+                Map<String, Object> sessionData = new HashMap<>();
+
+                // 将需要保存的数据（user）保存到 session 中
+                // session.setAtrribute("user", user);
+                sessionData.put("user", user);
+
+                // 剩下的工作就是 Tomcat 帮我们默默工作的
+                // cookie-name: session-id
+                // cookie-value: uuid
+                // 把 sessionData 持久化
+                try (OutputStream outputStream = new FileOutputStream(SESSION_BASE + "/" + uuid + ".session")) {
+                    try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+                        objectOutputStream.writeObject(sessionData);
+                    }
+                }
+
+                OutputStream outputStream = socket.getOutputStream();
+                Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
+                PrintWriter printWriter = new PrintWriter(writer);
+
+                printWriter.printf("HTTP/1.0 200 OK\r\n");
+                printWriter.printf("Set-Cookie: session-id=%s\r\n", uuid);
+                printWriter.printf("Content-Type: text/plain; charset=utf-8\r\n");
+                printWriter.printf("\r\n");
+                printWriter.printf("登录成功");
+                printWriter.flush();
+            } else if (requestURI.equals("/set-cookie")) {
                 OutputStream outputStream = socket.getOutputStream();
                 Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
                 PrintWriter printWriter = new PrintWriter(writer);
@@ -199,7 +296,7 @@ public class RequestResponseTask implements Runnable {
                     printWriter.flush();
                 }
             }
-        } catch (IOException exc) {
+        } catch (IOException | ClassNotFoundException exc) {
             exc.printStackTrace(System.out);
         } finally {
             try {
