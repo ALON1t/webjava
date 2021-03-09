@@ -11,7 +11,7 @@ public interface HttpServletResponse extends ServletResponse {
 
     void setHeader(String name, String value);
 
-    void setStatus(int sc);
+    void setStatus(int sc); //设置状态码
 
     void setContentType(String s);
 }

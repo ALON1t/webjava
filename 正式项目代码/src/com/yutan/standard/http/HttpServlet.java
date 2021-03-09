@@ -1,13 +1,13 @@
 package com.yutan.standard.http;
 
-import com.peixinchen.standard.Servlet;
-import com.peixinchen.standard.ServletException;
-import com.peixinchen.standard.ServletRequest;
-import com.peixinchen.standard.ServletResponse;
+import com.yutan.standard.Servlet;
+import com.yutan.standard.ServletException;
+import com.yutan.standard.ServletRequest;
+import com.yutan.standard.ServletResponse;
 import com.yutan.standard.ServletException;
 
 import java.io.IOException;
-
+//抽象类
 public abstract class HttpServlet implements Servlet {
     @Override
     public void init() throws ServletException {
