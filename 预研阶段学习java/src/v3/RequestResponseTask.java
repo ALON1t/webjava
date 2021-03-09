@@ -30,6 +30,7 @@ public class RequestResponseTask implements Runnable {
     }
 
     private static final String SESSION_BASE = "C:\\Users\\LENOVO\\预研阶段学习java\\sessions";
+    private static final String TEMPLATE_BASE = "C:\\Users\\LENOVO\\预研阶段学习java\\template";
 
     @Override
     public void run() {
@@ -70,7 +71,48 @@ public class RequestResponseTask implements Runnable {
                 requestURI = "/index.html";
             }
 
-            if (requestURI.equals("/required-login")) {
+            if(requestURI.equals("/get-book")) {
+                String username = "加"; //默认
+                for (String kv : queryString.split("&")) {
+                    if (kv.isEmpty()) {
+                        continue;
+                    }
+                    String[] part = kv.split("=");
+
+                    String key = URLDecoder.decode(part[0], "UTF-8");
+                    String value = URLDecoder.decode(part[1], "UTF-8");
+                    // URLEncoder.encode() 这个是进行 URL 编码
+
+                    if (key.equals("username")) {
+                        username = value;
+                    }
+                }
+                //模板技术
+                //读取模板
+                String templateContent = null;
+                StringBuilder sb = new StringBuilder();
+                try(InputStream is = new FileInputStream((TEMPLATE_BASE + "/hlm.txt"))){
+                    Scanner scanner1 = new Scanner(is,"UTF-8");
+                    while (scanner1.hasNextLine()) {
+                        sb.append(scanner1.nextLine());
+                        sb.append("\r\n");
+                    }
+                }
+                templateContent = sb.toString();
+                String content = templateContent.replace("${username}",username);
+
+                // 用户一定没有登录
+                OutputStream outputStream = socket.getOutputStream();
+                Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
+                PrintWriter printWriter = new PrintWriter(writer);
+                printWriter.printf("HTTP/1.0 200 OK\r\n");
+                //printWriter.printf("Set-Cookie: session-id=%s\r\n", uuid);
+                printWriter.printf("Content-Type: text/plain; charset=utf-8\r\n");
+                printWriter.printf("\r\n");
+                printWriter.printf("%s",content);
+                printWriter.flush();
+
+            } else if (requestURI.equals("/required-login")) {
                 String uuid = null;
                 String cookie = headers.getOrDefault("cookie", "");
                 for (String cookieKV : cookie.split(";")) {
