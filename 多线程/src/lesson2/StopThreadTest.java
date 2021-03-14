@@ -11,7 +11,10 @@ public class StopThreadTest {
                     //执行任务，执行时间较长
                     for (int i = 0; i < 1000 && !STOP;i++) {
                         System.out.println(i);
+                        //模拟中断线程
                         Thread.sleep(1000);
+                        //通过标志位自行实现无法解决线程阻塞，导致无法中断
+                        //Thread.sleep(100000);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
