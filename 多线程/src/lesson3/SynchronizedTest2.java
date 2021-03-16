@@ -12,8 +12,14 @@ public class SynchronizedTest2 {
                     while (STUDENT > 0) {
                         synchronized (cl){ //加锁
                             if (STUDENT > 0) {
-                                System.out.println(Thread.currentThread().getName() + ",还有" + STUDENT--);
+                                STUDENT--;
+                                System.out.println(Thread.currentThread().getName() + ",还有" + STUDENT);
                             }
+                        }
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -23,4 +29,5 @@ public class SynchronizedTest2 {
             t.start();
         }
     }
+
 }

@@ -3,6 +3,7 @@ package lesson2;
 public class StopThreadTest {
 
     private static volatile boolean STOP = false;
+
     public static void main(String[] args) throws InterruptedException {
         Thread t = new Thread(new Runnable() {
             @Override

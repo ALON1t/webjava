@@ -1,7 +1,7 @@
 package lesson3;
 
 public class UnsafeThread {
-    private static int COUNT = 0;
+    private volatile static int COUNT = 0;
     public static void main(String[] args) throws InterruptedException {
         Class cl = UnsafeThread.class;
         //有一个COUNT = 0 变量，同时启动20个 线程，每个线程执行1000次，每次循环COUNT++
@@ -12,9 +12,9 @@ public class UnsafeThread {
                 @Override
                 public void run() {
                     for (int j = 0; j < 1000;j++) {
-                        synchronized (cl){ //加锁
+                        //synchronized (cl){ //加锁
                             COUNT++;
-                        }
+                        //}
                     }
                 }
             });
