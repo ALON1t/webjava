@@ -33,7 +33,6 @@ class SingletonTest {
     private static volatile SingletonTest instance = null;
     private SingletonTest(){}
     public  static SingletonTest getInstance(){
-        //第一次实例化之后，应该允许多线程并行并发执行获取同一个对象
         if (instance == null) {
             synchronized (SingletonTest.class) {
                 if (instance == null) {
@@ -45,6 +44,6 @@ class SingletonTest {
     }
 
     public static void main(String[] args) {
-        
+
     }
 }
