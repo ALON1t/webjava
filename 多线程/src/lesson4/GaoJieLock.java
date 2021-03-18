@@ -1,6 +1,6 @@
 package lesson4;
 
-import java.util.Scanner;
+import java.util.Arrays;
 
 public class GaoJieLock {
     public static String  fun(String str) {
@@ -64,13 +64,31 @@ public class GaoJieLock {
 
 
     }
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-        while (in.hasNext()) {
-            String str = in.nextLine();
-            String  s = fun(str);
-            System.out.println(s);
+    public static int MoreThanHalfNum_Solution(int [] array) {
+        Arrays.sort(array);
+        int max = 0;
+        int index = 0;
+        for(int i = 0; i < array.length - 1;i++) {
+            int count = 1;
+            while((i + 1 < array.length) && array[i] == array[i + 1]) {
+                index = i;
+                count++;
+                i++;
+            }
+            if(count > max) {
+                max = count;
+            }
         }
+        if (max <= array.length /2) {
+            return 0;
+        }
+        return array[index];
+    }
+    public static void main(String[] args) {
+        int[] arr = {4,2,1,4,2,4};
+        int a = MoreThanHalfNum_Solution(arr);
+        System.out.println(a);
+
             //String str = "wyZksmG XY ReXA Pedt mabjlFdGmJUseHz GzciYP nDWh";
 
 
