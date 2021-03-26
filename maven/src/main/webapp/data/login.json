@@ -1,0 +1,15 @@
+{
+
+  "success": true,
+  "message": "ok",
+  "data1": {
+    "name": "张三"
+  },
+
+  "data2": [{
+    "name": "张三"
+  },{
+    "name": "李四"
+  }],
+  "data3": [1,2,3]
+}
