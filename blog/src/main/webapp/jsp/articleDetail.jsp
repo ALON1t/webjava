@@ -8,7 +8,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <html>
 <head>
 	<title>博客详情</title>
-	<base href="<%=basePath%>">  <!--动态渲染技术-->
+	<base href="<%=basePath%>">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<!-- HTTP 1.1 -->
 	<meta http-equiv="pragma" content="no-cache">
@@ -132,7 +132,7 @@ function articleSubmit(){
     // 修改博客文章，提交数据：title,content,id
 	if(type=="add"){
 		uri = "articleAdd";
-		json.id = '<%=request.getParameter("id")%>';
+		<%--json.id = '<%=request.getParameter("id")%>';  //用户id--%>
 	}else if(type=="update"){
 		uri = "articleUpdate";
 		json.id = articleId;

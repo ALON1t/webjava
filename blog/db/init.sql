@@ -39,3 +39,5 @@ insert into article(title, content, user_id) value ('插入排序','public ...',
 -- 真实的设计上是不删除物理设计，在每一张表上设计一个字段表示是否有效
 
 select id, username, password, nickname, sex, birthday, head from user where username = 'a'
+select id,title from article where user_id =1;
+delete from article where id in(1,2,3);

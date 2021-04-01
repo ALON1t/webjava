@@ -29,7 +29,7 @@
 	<div id="article_list_container">
 		<div class="btn-group" role="group">
 			<a id="article_add_btn" href="jsp/articleDetail.jsp?id=1&type=add" class="btn btn-default" role="button" target="_blank">发表新文章</a>
-			<a id="article_update_btn" href="javascript:void(0);" class="btn btn-default" role="button" target="_blank">修改</a>
+			<a id="article_update_btn" href="javascript:void(0);" class="btn btn-default" role="button">修改</a>
 			<a id="article_delete_btn" href="javascript:void(0);" class="btn btn-default" role="button">删除</a>
 		</div>
 		<div id="article_list_div"></div>

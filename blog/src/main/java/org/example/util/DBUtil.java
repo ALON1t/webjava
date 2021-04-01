@@ -49,8 +49,8 @@ public class DBUtil {
             if(s != null) {
                 s.close();
             }
-            if (r != null) {
-                r.close();
+            if (c != null) {
+                c.close();
             }
         } catch (SQLException e) {
             throw new AppException("DB002","数据库释放资源出错",e);

@@ -5,6 +5,7 @@ import org.example.model.User;
 import org.example.util.DBUtil;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -34,7 +35,16 @@ public class LoginDAO {
                 user.setNickname(rs.getString("nickname"));
                 user.setSex(rs.getBoolean("sex"));
                 //关于日期的使用
-                //Java中一般时使用Java.
+                //Java中一般时使用Java.util.Date(年月日时分秒)
+                //rs.getDate() //返回值是java.sql,Date(时分秒)
+                //rs.getTimestamp()  //返回值是java.sql.Timestamp(年月日时分秒)
+                //rs.getDate("birthday").getTime();
+                java.sql.Date birthday = rs.getDate("birthday");
+                if (birthday != null) {
+                    user.setBirthday(new Date(birthday.getTime()));
+                }
+
+                user.setHead(rs.getString("head"));
             }
             return user;
         } catch (Exception e) {
