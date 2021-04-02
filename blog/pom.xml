@@ -36,6 +36,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.8</version>
+            <!--编译时需要这个包，打包运行时不需要-->
             <scope>provided</scope>
         </dependency>
 
@@ -105,7 +106,7 @@
 
     <build>
         <!-- 打包后的包名（和我们部署的项目名一致） -->
-        <finalName>blogdemo</finalName>
+        <finalName>blog</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
