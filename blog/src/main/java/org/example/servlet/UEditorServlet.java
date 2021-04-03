@@ -1,11 +1,17 @@
 package org.example.servlet;
 
+import com.sun.jndi.toolkit.url.UrlUtil;
+import org.example.util.MyActionEnter;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLDecoder;
 
 /**
  * ueditor富文本编辑器图片上传
@@ -13,6 +19,9 @@ import java.io.IOException;
  * 2.修该webapp/static/ueditor/ueditor.config.js，33行修改
  *   (应用上下文路径 + 服务路径)
  * 3.实现后端接口（和第二步中的服务路径一致）
+ * 4.修改config.json配置：上传图片到本地服务路径，及访问的主机ip,port，应用上下文路径
+ * 5.idea运行时，需要配置tomcat：将tomcat/webapp路径下的项目都部署
+ *   在配置中勾上 Deploy applications configured in Tomcat instance
  */
 @WebServlet("/ueditor")
 public class UEditorServlet extends HttpServlet {
@@ -23,6 +32,17 @@ public class UEditorServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doGet(req, resp);
+        //ClassLoader  类加载器
+        //通过一个类加载器查找资源  查找方式：相对位置查找
+        URL url = UEditorServlet.class.getClassLoader().getResource("config.json");
+        //url获取到时，都是编码后的字符串，使用时需要解码再使用
+        String path = new URLDecoder().decode(url.getPath(),"UTF-8");
+        //框架提供的富文本编辑器上传功能
+        MyActionEnter enter = new MyActionEnter(req,path);
+        String exec = enter.exec();
+        PrintWriter pw = resp.getWriter();
+        pw.println(exec);
+        pw.flush();
+        pw.close();
     }
 }

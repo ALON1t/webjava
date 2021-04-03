@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * 执行流程： 客户端发起一个url请求(请求一个网页)
+ */
 @WebServlet("/login")
 public class loginServlet extends AbstractBaseServlet{
     @Override
