@@ -5,12 +5,19 @@ import org.example.util.JSONUtil;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+/**
+ *   filter
+ *     作用和执行流程
+ *
+ *     执行流程：
+ *
+ */
 
 //使用filter实现统一的资源过滤  如用户会话的统一管理，编码格式统一设置等
 //使用方式：如果不满足条件，就不执行doFilter,不往下执行（跳转页面或者直接输出内容）

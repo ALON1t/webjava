@@ -10,7 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-//sql对应的Java类
+//sql对应的Java类  用户类
 public class User {
     private Integer id;
     private String username;

@@ -11,6 +11,39 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+/**
+ * Servlet：
+ *    servlet是否能返回一个网页？
+ *       答：可以  可以使用resp.setContentType() 设置
+ *             例如：resp.setContentType("text/html")  html格式  返回网页
+ *                 resp.setContentType("application/octet-stream")  二进制流（常见的文件下载）
+ *
+ *       jsp:特殊的Servlet
+ *           类似 html 语法，本质上还是servlet，使用输出流write() 输出网页内容
+ *           名称：网页模板，其他类似如freemarker,velocity,theamleaf等（框架提供占位符，替换变量）
+ *           作用：动态渲染  可以返回动态的网页内容
+ *
+ *   请求是否能请求任意内容？
+ *      答：可以，通过request获取任意数据类型/类型
+ *
+ *    如何定位服务资源？请求url -->映射后端资源
+ *    servlet如何接受http请求数据？
+ *      1.queryString  通过request.getParameter("键")
+ *      2.请求Content-Type:表单格式（x-www-form-urlencoded）  通过request.getParameter("键")
+ *      3.无论请求数据类型是什么，请求体的数据都可以通过request.getInputStream()来做
+ *         只要是自己解析
+ *      4.特殊的：因为请求数据类型为
+ *             表单格式 （使用简单方式：getParameter()）
+ *             application/json  （1.使用第三个方式：getInputStream() 2.自己解析：使用第三方框架解析）
+ *             form-data（文件格式），
+ *           也可以通过第三点来获取，但是自己解析比较复杂  （使用简单方式：getParameter()）
+ *
+ *        （接收multipart/form-data请求数据类型
+ *        多个键值对的方式，任意键值对都可以是数据，也可以是文件
+ *        所以form-data支持多文件上传 + 多数据传输）
+ */
+
+//抽象类父类 模板方法
 public abstract class AbstractBaseServlet extends HttpServlet { //抽象类
 
     @Override

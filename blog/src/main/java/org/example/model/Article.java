@@ -10,7 +10,7 @@ import java.util.Date;
 @Setter
 @ToString
 
-//sql对应的Java类
+//sql对应的Java类  文章类
 public class Article {
     private Integer id;
     private String title;
