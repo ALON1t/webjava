@@ -1,0 +1,28 @@
+class Solution {
+    public int[] plusOne(int[] digits) {
+        int index = digits.length - 1;
+        int len = digits.length;
+        int sum = digits[index] + 1;
+
+        if(sum > 9) {
+            while(sum > 9 && index  != 0) {
+                digits[index] = sum % 10;
+                index--;
+                digits[index] += 1;
+                sum = digits[index];
+            }
+            if(index == 0 && sum > 9) {
+                int[] digits1 = new int[len + 1];
+                for(int i = 1; i < len + 1; i++) {
+                    digits1[i] = digits[i - 1];
+                }
+                digits1[1] = sum % 10;
+                digits1[0] = sum/10;
+                return digits1;
+            }
+        } else {
+            digits[index] = sum;
+        }
+        return digits;
+    }
+}
